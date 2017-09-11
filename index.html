@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Core extensions CSS from Contentful. -->
+  <link rel="stylesheet"
+        href="//contentful.github.io/ui-extensions-sdk/cf-extension.css">
+        
+  <style>
+  
+  <style>
+    .suggestion-text {
+        visibility: hidden;
+        width: 120px;
+        background-color: #5DB384;
+        color: #ffffff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+     
+        position: absolute;
+        z-index: 1;
+    }
+    
+    span.known {
+        color: #c5d2d8;
+    }
+    
+    span.guess {
+      font-weight: bold;
+      color: #5cb85c;
+    }
+    
+    .tag-item-remove {
+        height: 2rem;
+        float: right;
+        padding: 0 0.7rem;
+        margin-right: -2ex;
+        outline: 0;
+        margin: 0;
+        border: 0;
+        cursor: pointer;
+        background: none;
+        color: inherit;
+    }
+    
+    ul.tag-list {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: box;
+        display: flex;
+        -webkit-box-lines: multiple;
+        -moz-box-lines: multiple;
+        -o-box-lines: multiple;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    
+    .tag-item {
+        background: #eef2f4;
+        line-height: 2rem;
+        border-radius: 2px;
+        padding: 1px 2ex 0 2ex;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        color: #536171;        
+        -o-text-overflow: ellipsis;
+        -webkit-border-radius: 2px;
+        margin-bottom: 0.643em;
+        margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<template id="tag">
+    <li class="tag-item">
+        <span class="tag-label"></span>
+      
+        <button aria-label="remove" type="button" class="tag-item-remove"><cf-icon name="close"><svg width="18" height="14" viewBox="-1 -1 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="#21304A"><g><path d="M6.23 9L1.386 4.154 0 2.769 2.77 0l1.384 1.385L9 6.23l4.846-4.846L15.231 0 18 2.77l-1.385 1.384L11.77 9l4.846 4.846L18 15.231 15.23 18l-1.384-1.385L9 11.77l-4.846 4.846L2.769 18 0 15.23l1.385-1.384L6.23 9z"></path></g></g></g></svg></cf-icon></button>
+    </li>
+</template>
+
+
+<!-- Extension DOM Elements -->
+<div class="cf-form-field">
+  <input type="text" class="cf-form-input tag-field" id="tag-field">
+  <div class="suggestion-text">
+      <span class="known"></span><span class="guess"></span>
+  </div>
+  <div class="cf-form-hint">
+      <ul class="tag-list" id="tag-list">
+      </ul>
+  </div>
+</div>
+
+<!-- Contenful UI Extensions SDK API -->
+<script src="//contentful.github.io/ui-extensions-sdk/cf-extension-api.js"></script>
+
+<script>
+
+  function tagExtension(extensionsApi) {
+
+    extensionsApi.window.startAutoResizer();
+    
+    // Get the DOM elements
+    var tagFieldEl = document.querySelector('#tag-field');
+    var tagListEl = document.querySelector('#tag-list');
+    var suggestionTextEl = document.querySelector('.suggestion-text');
+    
+    // Disable the field whilst we fetch Tags
+    tagFieldEl.disabled = true;
+
+    var entry = extensionsApi.entry;
+    var field = extensionsApi.field;
+    
+    // Get all entries in the space...
+    var allEntries = extensionsApi.space.getEntries({});
+    var allTags = [];
+    var uniqueTags = null;
+    var suggestion = null;
+    
+    renderTags();
+    
+    allEntries.then(function(entries) {
+        entries.items.forEach(function(e) {
+            if (e.fields.hasOwnProperty('tags') && e.fields.tags.hasOwnProperty(field.locale)) {
+                e.fields.tags[field.locale].forEach(function(t) {
+                    allTags.push(t);
+                });
+            }
+        });
+        
+        uniqueTags = allTags.filter(function(item, pos){
+            return allTags.indexOf(item)== pos; 
+        });
+        
+        
+        tagFieldEl.disabled = false;
+        renderSuggestions();
+    });
+    
+    window.addEventListener('onbeforeunload', onBeforeUnloadHandler);
+
+    tagFieldEl.addEventListener('input', keyboardInputHandler);
+    tagFieldEl.addEventListener('keydown', addTagHandler);
+
+
+    function keyboardInputHandler(event) {
+      renderSuggestions();
+    }
+
+    function addTagHandler(event) {
+      var key = event.which || event.keyCode;
+      
+      if (key === 39 && suggestion) { // 39 is right arrow
+        event.preventDefault();
+        tagFieldEl.value = suggestion;
+        renderSuggestions();
+        return false;
+      }
+      
+      else if (key === 13 && tagFieldEl.value) { // 13 is enter
+        event.preventDefault();
+        
+        var tags = field.getValue();
+        
+        if (tags) {
+            field.setValue(tags.concat(tagFieldEl.value));
+        }
+        else {
+            field.setValue([tagFieldEl.value]);
+        }
+        
+        tagFieldEl.value = '';
+        
+        renderTags();
+        renderSuggestions();
+        
+        return false;
+      }
+    }
+
+    function onBeforeUnloadHandler(event) {
+      window.removeEventListener('onbeforeunload', onBeforeUnloadHandler);
+      tagFieldEl.removeEventListener('input', keyboardInputHandler);
+      tagFieldEl.removeEventListener('keypress', addTagHandler);
+    }
+
+    function findSuggestion() {
+        if (tagFieldEl.value == '') return null;
+        
+        var matcher = new RegExp('^' + tagFieldEl.value);
+        for (var i=0; i < uniqueTags.length; i++) {
+            if (matcher.test(uniqueTags[i])) return uniqueTags[i];
+        }
+        return null;
+    }
+    
+    function renderSuggestions() {
+        // Do not render if there are no tags.
+        if (!uniqueTags) {
+          console.log('No tags found!');
+          return;
+        }
+        
+        suggestion = findSuggestion();
+        if (!suggestion) {
+            suggestionTextEl.style.visibility = 'hidden';
+            return;
+        }
+        
+        suggestionTextEl.querySelector('.known').innerHTML = tagFieldEl.value;
+        suggestionTextEl.querySelector('.guess').innerHTML = suggestion.slice(tagFieldEl.value.length);
+        
+        suggestionTextEl.style.visibility = 'visible';
+    }
+    
+    function removeTag(index) {
+        var tags = field.getValue();
+        if (index > -1 && tags && tags.length > index) {
+            var newTags = tags;
+            newTags.splice(index, 1);
+            field.setValue(newTags);
+        }
+        renderTags();
+    }
+    
+    function sanitiseTags() {
+        var tags = field.getValue();
+        if (!tags) {
+            return;
+        }
+        
+        field.setValue(tags.filter(function(item, pos){
+            return tags.indexOf(item)== pos; 
+        }));
+    }
+    
+    function renderTags() {
+        sanitiseTags();
+        
+        while (tagListEl.firstChild) {
+            tagListEl.removeChild(tagListEl.firstChild);
+        }
+        
+        var existingTags = field.getValue();
+        
+        if (!existingTags) return;
+        
+        existingTags.forEach(function(tag, index) {
+            var tagTemplate = document.querySelector('#tag').content;
+            tagTemplate.querySelector('.tag-item span.tag-label').textContent = tag;
+            
+            var thisTag = document.importNode(tagTemplate, true);
+            document.querySelector('#tag-list').appendChild(thisTag);
+            document.querySelector('#tag-list li:last-child button').onclick = function() {
+                removeTag(index);
+            }
+        });        
+    }
+
+  }
+  window.contentfulExtension.init(tagExtension);
+</script>
+
+</body>
+</html>

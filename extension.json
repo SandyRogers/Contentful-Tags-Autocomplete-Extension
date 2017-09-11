@@ -1,0 +1,6 @@
+{
+  "id": "autotags",
+  "name": "Auto Tags",
+  "srcdoc": "index.html",
+  "fieldTypes": ["Symbols"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "autocompleteTags",
+  "version": "1.0.0",
+  "description": "Autocompleting Tag type tests in Contenful UI.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create": "contentful-extension create --space-id $SPACE_ID",
+    "update": "contentful-extension update --space-id $SPACE_ID --force",
+    "dev": "contentful-extension update --space-id $SPACE_ID --force --src 'http://localhost:3030/index.html'"
+  },
+  "author": "s@ndyroge.rs",
+  "license": "MIT",
+  "devDependencies": {
+    "contentful-extension-cli": "^2.0.0"
+  },
+  "dependencies": {
+  }
+}
