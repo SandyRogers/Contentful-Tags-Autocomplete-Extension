@@ -1,6 +1,6 @@
 # Autocompleting Tags in Contentful
 
-[https://www.contentful.com](Contentful) is a content management platform. It has a concept of *Tags*, and these fall into their "content as metadata" approach. This means that *Tags* are just another type of [https://www.contentful.com/developers/docs/concepts/data-model/](short-text field) you can add, as a [https://www.contentful.com/developers/docs/concepts/data-model/#array-fields](List). Contentful has a [https://www.contentful.com/developers/docs/concepts/editor-interfaces/](Tag-style appearance) choice for these.
+[Contentful](https://www.contentful.com) is a content management platform. It has a concept of *Tags*, and these fall into their "content as metadata" approach. This means that *Tags* are just another type of [Short-Text Field](https://www.contentful.com/developers/docs/concepts/data-model/) you can add, as a [List](https://www.contentful.com/developers/docs/concepts/data-model/#array-fields). Contentful has a [Tag style appearance](https://www.contentful.com/developers/docs/concepts/editor-interfaces/]) choice for these.
 
 ## But they don't autocomplete!
 In my experience, Tags are most useful when they autocomplete as you type things. This lets you keep some kind of consistency in your Tags across documents. Without autocomplete, you end up having "Spiderman" and "Spider man" and "Spider Man" as three different Tags 😱️
