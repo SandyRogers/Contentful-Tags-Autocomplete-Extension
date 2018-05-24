@@ -1,279 +1,316 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <!-- Core extensions CSS from Contentful. -->
-  <link rel="stylesheet"
-        href="//contentful.github.io/ui-extensions-sdk/cf-extension.css">
+    <meta charset="UTF-8">
+    <!-- Core extensions CSS from Contentful. -->
+    <link rel="stylesheet" href="//contentful.github.io/ui-extensions-sdk/cf-extension.css">
+
+    <style>
+        .tag-field {
+            z-index: 2
+        }
         
-  <style>
-  
-  <style>
-    .suggestion-text {
-        visibility: hidden;
-        width: 120px;
-        background-color: #5DB384;
-        color: #ffffff;
-        text-align: center;
-        padding: 5px 0;
-        border-radius: 6px;
-     
-        position: absolute;
-        z-index: 1;
-    }
-    
-    span.known {
-        color: #c5d2d8;
-    }
-    
-    span.guess {
-      font-weight: bold;
-      color: #5cb85c;
-    }
-    
-    span.instruction {
-        color: #c5d2d8;
-        padding-left: 5em;
-        font-style: italic;
-    }
-    
-    .tag-item-remove {
-        height: 2rem;
-        float: right;
-        padding: 0 0.7rem;
-        margin-right: -2ex;
-        outline: 0;
-        margin: 0;
-        border: 0;
-        cursor: pointer;
-        background: none;
-        color: inherit;
-    }
-    
-    ul.tag-list {
-        display: -webkit-box;
-        display: -moz-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: box;
-        display: flex;
-        -webkit-box-lines: multiple;
-        -moz-box-lines: multiple;
-        -o-box-lines: multiple;
-        -webkit-flex-wrap: wrap;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-    }
-    
-    .tag-item {
-        background: #eef2f4;
-        line-height: 2rem;
-        border-radius: 2px;
-        padding: 1px 2ex 0 2ex;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        position: relative;
-        color: #536171;        
-        -o-text-overflow: ellipsis;
-        -webkit-border-radius: 2px;
-        margin-bottom: 0.643em;
-        margin-right: 1rem;
-    }
-  </style>
+        ul.suggestion-text {
+            visibility: hidden;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 5px;
+            border-radius: 6px;
+            margin-top: -33px;
+            margin-left: -3px;
+
+            position: absolute;
+        }
+
+        span.known {
+            color: #2b502b;
+            font-weight: bolder;
+            font-size: 16px;
+        }
+
+        span.guess {
+            color: #858585;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        span.instruction {
+            color: #9cb883;
+            padding-right: 1em;
+            padding-left: 1em;
+            font-style: italic;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul.tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            padding-left: 0px;
+            margin-top: 1rem;
+            margin-bottom: 0px;
+        }
+
+        .tag-item {
+            background: #eef2f4;
+            line-height: 2rem;
+            border-radius: 2px;
+            padding: 1px 2ex 0 2ex;
+            text-overflow: ellipsis;
+            color: #536171;
+            margin-bottom: 0.643em;
+            margin-right: 1rem;
+        }
+
+        .tag-item-remove {
+            height: 2rem;
+            float: right;
+            margin-right: -2ex;
+            outline: 0;
+            border: 0;
+            cursor: pointer;
+            background: none;
+            color: inherit;
+        }
+    </style>
 </head>
+
 <body>
+    <template id="tag">
+        <li class="tag-item">
+            <span class="tag-label"></span>
 
-<template id="tag">
-    <li class="tag-item">
-        <span class="tag-label"></span>
-      
-        <button aria-label="remove" type="button" class="tag-item-remove"><cf-icon name="close"><svg width="18" height="14" viewBox="-1 -1 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="#21304A"><g><path d="M6.23 9L1.386 4.154 0 2.769 2.77 0l1.384 1.385L9 6.23l4.846-4.846L15.231 0 18 2.77l-1.385 1.384L11.77 9l4.846 4.846L18 15.231 15.23 18l-1.384-1.385L9 11.77l-4.846 4.846L2.769 18 0 15.23l1.385-1.384L6.23 9z"></path></g></g></g></svg></cf-icon></button>
-    </li>
-</template>
+            <button aria-label="remove" type="button" class="tag-item-remove">
+                <cf-icon name="close">
+                    <svg width="18" height="14" viewBox="-1 -1 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" fill-rule="evenodd">
+                            <g fill="#21304A">
+                                <path d="M6.23 9L1.386 4.154 0 2.769 2.77 0l1.384 1.385L9 6.23l4.846-4.846L15.231 0 18 2.77l-1.385 1.384L11.77 9l4.846 4.846L18 15.231 15.23 18l-1.384-1.385L9 11.77l-4.846 4.846L2.769 18 0 15.23l1.385-1.384L6.23 9z"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </cf-icon>
+            </button>
+        </li>
+    </template>
+
+    <template id="suggestion-template">
+        <li class="suggestion">
+            <span class="known"></span><span class="guess"></span><span class="instruction"></span>
+        </li>
+    </template>
+
+    <template id="alert-text">
+        <p>Field Empty... (Confirm an entry with `Enter` key)</p>
+    </template>
+
+    <!-- Extension DOM Elements -->
+    <div class="cf-form-field">
+        <input type="text" class="cf-form-input tag-field" id="tag-field">
+
+        <ul class="suggestion-text" id="suggestion-text" style="pointer-events: none">
+        </ul>
+
+        <div class="cf-form-hint">
+            <ul class="tag-list" id="tag-list">
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contenful UI Extensions SDK API -->
+    <script src="//contentful.github.io/ui-extensions-sdk/cf-extension-api.js"></script>
+
+    <!-- Javascript event-listeners -->
+    <script>
+        document.getElementById("tag-field").onblur = function() {
+            document.getElementById("suggestion-text").style.visibility = 'hidden';
+
+            document.querySelector('#tag-field').placeholder = document.querySelector('#tag-field').value;
+            document.querySelector('#tag-field').value = '';
+        }
+
+        document.getElementById("tag-field").onfocus = function() {
+            document.getElementById("suggestion-text").style.visibility = 'visible';
+
+            document.querySelector('#tag-field').value = document.querySelector('#tag-field').placeholder;
+            document.querySelector('#tag-field').placeholder = '';
+        }
+    </script>
+
+    <script>
+        // Set this to 'TRUE', before publising the extention, in order to restrict matches to within the same content-type.
+        var restrictMatchesToWithinContentTypes = false;
+
+        function tagExtension(extensionsApi) {
+            extensionsApi.window.startAutoResizer();
+
+            // Get the DOM elements
+            var tagFieldEl = document.querySelector('#tag-field');
+            var tagListEl = document.querySelector('#tag-list');
+            var suggestionTextEl = document.querySelector('.suggestion-text');
+
+            // Disable the field whilst we fetch Tags
+            tagFieldEl.disabled = true;
+
+            var entry = extensionsApi.entry;
+            var entryContentType = entry.getSys().contentType.sys.id;
+            var field = extensionsApi.field;
+            var fieldName = field.id
+
+            // Get all entries in the space...
+            var allEntries = extensionsApi.space.getEntries({});
+            var uniqueTags = null;
+            var suggestions = [];
+
+            var _thisFieldIsSymbol = field.type == 'Symbol';
+            var _tagValues = !field.getValue() ? [] : ( _thisFieldIsSymbol ? [field.getValue()] : field.getValue());
+
+            renderTags();
+
+            allEntries.then(function (entries) {
+                var allTags = [];
+                var eItems = entries.items;
+                for (var i = 0, len = eItems.length; i < len; i++) {
+                    if ( (!restrictMatchesToWithinContentTypes || eItems[i].sys.contentType.sys.id == entryContentType) &&
+                        eItems[i].fields.hasOwnProperty(fieldName) &&
+                        eItems[i].fields[fieldName].hasOwnProperty(field.locale) )
+                    {
+                        allTags = allTags.concat(eItems[i].fields[fieldName][field.locale]);
+                    }
+                };
+
+                uniqueTags = allTags.filter(function (item, pos) {
+                    return allTags.indexOf(item) == pos;
+                });
+
+                tagFieldEl.disabled = false;
+            });
+
+            window.addEventListener('onbeforeunload', onBeforeUnloadHandler);
+            tagFieldEl.addEventListener('input', keyboardInputHandler);
+            tagFieldEl.addEventListener('keydown', addTagHandler);
 
 
-<!-- Extension DOM Elements -->
-<div class="cf-form-field">
-  <input type="text" class="cf-form-input tag-field" id="tag-field">
-  <div class="suggestion-text">
-      <span class="known"></span><span class="guess"></span><span class="instruction">Press → key to select</span>
-  </div>
-  <div class="cf-form-hint">
-      <ul class="tag-list" id="tag-list">
-      </ul>
-  </div>
-</div>
+            function keyboardInputHandler(event) {
+                renderSuggestions();
+            }
 
-<!-- Contenful UI Extensions SDK API -->
-<script src="//contentful.github.io/ui-extensions-sdk/cf-extension-api.js"></script>
+            function addTagHandler(event) {
+                var tagValue = tagFieldEl.value.trim()
+                var key = event.which || event.keyCode;
 
-<script>
+                if ( (key === 39 || key === 9) && suggestions[0] ) { // 9 is Tab // 39 is Right Arrow Key
+                    event.preventDefault();
+                    tagFieldEl.value = suggestions[0];
 
-  function tagExtension(extensionsApi) {
+                    renderSuggestions();
 
-    extensionsApi.window.startAutoResizer();
-    
-    // Get the DOM elements
-    var tagFieldEl = document.querySelector('#tag-field');
-    var tagListEl = document.querySelector('#tag-list');
-    var suggestionTextEl = document.querySelector('.suggestion-text');
-    
-    // Disable the field whilst we fetch Tags
-    tagFieldEl.disabled = true;
+                    return false;
+                } else if ( key === 13 && tagValue ) { // 13 is Enter
+                    event.preventDefault();
 
-    var entry = extensionsApi.entry;
-    var field = extensionsApi.field;
-    
-    // Get all entries in the space...
-    var allEntries = extensionsApi.space.getEntries({});
-    var allTags = [];
-    var uniqueTags = null;
-    var suggestion = null;
-    
-    renderTags();
-    
-    allEntries.then(function(entries) {
-        entries.items.forEach(function(e) {
-            if (e.fields.hasOwnProperty('tags') && e.fields.tags.hasOwnProperty(field.locale)) {
-                e.fields.tags[field.locale].forEach(function(t) {
-                    allTags.push(t);
+                    if ( _thisFieldIsSymbol ) { _tagValues = [tagValue]; }
+                    else { _tagValues.splice(0,0,tagValue); }
+
+                    tagFieldEl.value = '';
+
+                    renderTags();
+                    renderSuggestions();
+
+                    return false;
+                }
+            }
+
+            function onBeforeUnloadHandler(event) {
+                window.removeEventListener('onbeforeunload', onBeforeUnloadHandler);
+                tagFieldEl.removeEventListener('input', keyboardInputHandler);
+                tagFieldEl.removeEventListener('keypress', addTagHandler);
+            }
+
+            function findSuggestions() {
+                if ( tagFieldEl.value == '' ) return [];
+
+                var suggestionsList = [];
+                var matcher = new RegExp('^' + tagFieldEl.value);
+                for (var i = 0; i < uniqueTags.length; i++) {
+                    var x = uniqueTags[i]
+                    if ( matcher.test(x) ) suggestionsList.push(x);
+                }
+
+                return suggestionsList.sort(function (a, b) {
+                    return a.length - b.length;
                 });
             }
-        });
-        
-        uniqueTags = allTags.filter(function(item, pos){
-            return allTags.indexOf(item)== pos; 
-        });
-        
-        
-        tagFieldEl.disabled = false;
-        renderSuggestions();
-    });
-    
-    window.addEventListener('onbeforeunload', onBeforeUnloadHandler);
 
-    tagFieldEl.addEventListener('input', keyboardInputHandler);
-    tagFieldEl.addEventListener('keydown', addTagHandler);
+            function renderSuggestions() {
+                suggestionTextEl.style.visibility = 'hidden';
 
+                suggestions = findSuggestions();
 
-    function keyboardInputHandler(event) {
-      renderSuggestions();
-    }
+                while (suggestionTextEl.firstChild) suggestionTextEl.removeChild(suggestionTextEl.firstChild);
 
-    function addTagHandler(event) {
-      var key = event.which || event.keyCode;
-      
-      if (key === 39 && suggestion) { // 39 is right arrow
-        event.preventDefault();
-        tagFieldEl.value = suggestion;
-        renderSuggestions();
-        return false;
-      }
-      
-      else if (key === 13 && tagFieldEl.value) { // 13 is enter
-        event.preventDefault();
-        
-        var tags = field.getValue();
-        
-        if (tags) {
-            field.setValue(tags.concat(tagFieldEl.value));
-        }
-        else {
-            field.setValue([tagFieldEl.value]);
-        }
-        
-        tagFieldEl.value = '';
-        
-        renderTags();
-        renderSuggestions();
-        
-        return false;
-      }
-    }
+                // Do not render if there are no tags.
+                if ( !uniqueTags || suggestions.length == 0 ) {
+                    console.log('No tags found!');
+                    return;
+                }
 
-    function onBeforeUnloadHandler(event) {
-      window.removeEventListener('onbeforeunload', onBeforeUnloadHandler);
-      tagFieldEl.removeEventListener('input', keyboardInputHandler);
-      tagFieldEl.removeEventListener('keypress', addTagHandler);
-    }
+                for (var i = 0, len = suggestions.length; i < len; i++) {
+                    var suggestionTemplate = document.querySelector('#suggestion-template').content;
+                    suggestionTemplate.querySelector('.known').innerHTML = tagFieldEl.value;
+                    suggestionTemplate.querySelector('.guess').innerHTML = suggestions[i].slice(tagFieldEl.value.length);
 
-    function findSuggestion() {
-        if (tagFieldEl.value == '') return null;
-        
-        var matcher = new RegExp('^' + tagFieldEl.value);
-        for (var i=0; i < uniqueTags.length; i++) {
-            if (matcher.test(uniqueTags[i])) return uniqueTags[i];
-        }
-        return null;
-    }
-    
-    function renderSuggestions() {
-        // Do not render if there are no tags.
-        if (!uniqueTags) {
-          console.log('No tags found!');
-          return;
-        }
-        
-        suggestion = findSuggestion();
-        if (!suggestion) {
-            suggestionTextEl.style.visibility = 'hidden';
-            return;
-        }
-        
-        suggestionTextEl.querySelector('.known').innerHTML = tagFieldEl.value;
-        suggestionTextEl.querySelector('.guess').innerHTML = suggestion.slice(tagFieldEl.value.length);
-        
-        suggestionTextEl.style.visibility = 'visible';
-    }
-    
-    function removeTag(index) {
-        var tags = field.getValue();
-        if (index > -1 && tags && tags.length > index) {
-            var newTags = tags;
-            newTags.splice(index, 1);
-            field.setValue(newTags);
-        }
-        renderTags();
-    }
-    
-    function sanitiseTags() {
-        var tags = field.getValue();
-        if (!tags) {
-            return;
-        }
-        
-        field.setValue(tags.filter(function(item, pos){
-            return tags.indexOf(item)== pos; 
-        }));
-    }
-    
-    function renderTags() {
-        sanitiseTags();
-        
-        while (tagListEl.firstChild) {
-            tagListEl.removeChild(tagListEl.firstChild);
-        }
-        
-        var existingTags = field.getValue();
-        
-        if (!existingTags) return;
-        
-        existingTags.forEach(function(tag, index) {
-            var tagTemplate = document.querySelector('#tag').content;
-            tagTemplate.querySelector('.tag-item span.tag-label').textContent = tag;
-            
-            var thisTag = document.importNode(tagTemplate, true);
-            document.querySelector('#tag-list').appendChild(thisTag);
-            document.querySelector('#tag-list li:last-child button').onclick = function() {
-                removeTag(index);
+                    if ( i.toString() == "0" ) { suggestionTemplate.querySelector('.instruction').innerHTML = "→ Tab"; } 
+                    else { suggestionTemplate.querySelector('.instruction').innerHTML = ""; }
+
+                    var thisSuggestion = document.importNode(suggestionTemplate, true);
+                    document.querySelector('#suggestion-text').appendChild(thisSuggestion);
+                }
+
+                suggestionTextEl.style.visibility = 'visible';
             }
-        });        
-    }
 
-  }
-  window.contentfulExtension.init(tagExtension);
-</script>
+            function removeTag(index) {
+                if ( index > -1 && 
+                    _tagValues && 
+                    _tagValues.length > index ) 
+                { 
+                    _tagValues.splice(index, 1); 
+                }
 
+                renderTags();
+            }
+
+            function renderTags() {
+                if ( _thisFieldIsSymbol ) { field.setValue(_tagValues[0]); } 
+                else { field.setValue(_tagValues); }
+
+                while (tagListEl.firstChild) tagListEl.removeChild(tagListEl.firstChild);
+
+                _tagValues.filter(function (item, pos) { 
+                    return _tagValues.indexOf(item) == pos; 
+                });
+
+                _tagValues.forEach(function (tag, index) {
+                    var tagTemplate = document.querySelector('#tag').content;
+                    tagTemplate.querySelector('.tag-item span.tag-label').textContent = tag;
+
+                    var thisTag = document.importNode(tagTemplate, true);
+                    document.querySelector('#tag-list').appendChild(thisTag);
+
+                    document.querySelector('#tag-list li:last-child button').onclick = function () { removeTag(index); }
+                });
+
+                if ( !tagListEl.firstChild ) {
+                    document.querySelector('#tag-list').appendChild(  document.importNode( document.querySelector('#alert-text').content , true ) )
+                }
+            }
+        }
+
+        window.contentfulExtension.init(tagExtension);
+    </script>
 </body>
+
 </html>

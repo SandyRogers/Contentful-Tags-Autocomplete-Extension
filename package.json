@@ -1,12 +1,12 @@
 {
-  "name": "autocompleteTags",
-  "version": "1.0.0",
-  "description": "Autocompleting Tag type tests in Contenful UI.",
+  "name": "autocomplete-linked-field",
+  "version": "2.0.0",
+  "description": "Allows for the autocompletion of entries from like-named fields in Contenful UI.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create": "contentful-extension create --space-id $SPACE_ID",
-    "update": "contentful-extension update --space-id $SPACE_ID --force",
-    "dev": "contentful-extension update --space-id $SPACE_ID --force --src 'http://localhost:3030/index.html'"
+    "create": "contentful-extension create --space-id $CONTENTFUL_API_SPACE",
+    "update": "contentful-extension update --space-id $CONTENTFUL_API_SPACE --force",
+    "dev": "contentful-extension update --space-id $CONTENTFUL_API_SPACE --force --src 'http://localhost:3030/index.html'"
   },
   "author": "s@ndyroge.rs",
   "license": "MIT",
