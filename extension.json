@@ -1,6 +1,6 @@
 {
-  "id": "autotags",
-  "name": "Auto Tags",
+  "id": "AutocompleteLinkedField",
+  "name": "Autocomplete Linked Field",
   "srcdoc": "index.html",
-  "fieldTypes": ["Symbols"]
+  "fieldTypes": ["Symbol", "Symbols"]
 }

@@ -3,14 +3,16 @@
 [Contentful](https://www.contentful.com) is a content management platform. It has a concept of *Tags*, and these fall into their "content as metadata" approach. This means that *Tags* are just another type of [Short-Text Field](https://www.contentful.com/developers/docs/concepts/data-model/) you can add, as a [List](https://www.contentful.com/developers/docs/concepts/data-model/#array-fields). Contentful has a [Tag style appearance](https://www.contentful.com/developers/docs/concepts/editor-interfaces/]) choice for these.
 
 ## But they don't autocomplete!
-In my experience, Tags are most useful when they autocomplete as you type things. This lets you keep some kind of consistency in your Tags across documents. Without autocomplete, you end up having "Spiderman" and "Spider man" and "Spider Man" as three different Tags 😱️
+Tags are most useful when they autocomplete as you type things. This lets you keep some kind of consistency in your Tags across documents. Without autocomplete, you end up having "Spiderman" and "Spider-man" and "Spider Man" as three different Tags 😱️
 
 *This UI extension adds a rendering option for Autocompleting tags to Contentful.*
 
-![Screenshot of Autocompleting Tags extension](./autocomplete_tags.png)
+![Screenshot of Autocompleting Tags extension](./Screenshot-Autocomplete-Multiple.png)
 
 ## Where do the tags come from?
-Any documents in the Space which have a field called "tags" will be searched for. Their contents will then become the autocomplete suggestions for the document you're editing.
+The tags are pulled from all fields which share the same name, throughout the Contentful-Space.
+
+(This can be restricted further so as to only pull from within the same content type... _Enable ln142 in index.html_)
 
 ## Installation and usage
 This uses Contentful's Extensions SDK.
